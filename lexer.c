@@ -300,7 +300,7 @@ int getNextToken() {
                     state = 2;
                 } else if (isdigit(ch)) {
                     state = 3;
-                } else if (ch == '.' && isdigit(*(pCrtCh + 1))) {
+                } else if (ch == '.') {
                     pCrtCh++;
                     state = 11;
                 } else {
@@ -332,7 +332,7 @@ int getNextToken() {
             } else if (isdigit(ch)) {
                 addTk(END);
                 err("error in line %d: invalid octal digit: %c", line, ch);
-            } else if (ch == '.' && isdigit(*(pCrtCh + 1))) {
+            } else if (ch == '.') {
                 pCrtCh++;
                 state = 11;
             } else {
@@ -345,10 +345,13 @@ int getNextToken() {
         case 6: // decimal integer
             if (isdigit(ch)) {
                 pCrtCh++;
-            } else if (ch == '.' && isdigit(*(pCrtCh + 1))) {
+            } else if (ch == '.') {
                 pCrtCh++;
                 state = 11;
-            } else {
+            } else if(ch == 'e' || ch == 'E'){
+                pCrtCh ++;
+                state = 12;
+            }else {
                 tk = addTk(CT_INT);
                 tk->attr.i = strtol(pStartCh, NULL, 10);
                 return CT_INT;
@@ -364,7 +367,18 @@ int getNextToken() {
                 return CT_REAL;
             }
             break;
+        
+        case 12:
+            while(isdigit(ch)){
+                pCrtCh++;
+                ch = *pCrtCh;
+            }
+            
+            tk = addTk(CT_REAL);
+            tk->attr.r = atof(pStartCh);
+            return CT_REAL;
 
+            break;
         case 13: // identifier/keyword
             if (isalnum(ch) || ch == '_') {
                 pCrtCh++;
