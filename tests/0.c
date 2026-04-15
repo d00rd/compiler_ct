@@ -1,0 +1,20 @@
+
+int sum()
+{
+	int	 i,v[5],s;
+	s=0x8a;
+	for(i=0;i<5;i=i+1){
+		v[i]=i;
+		s=s+v[i];
+		}
+	return s;
+}
+
+void main()
+{
+	int		i,s;
+	for(i=0;i<1000000;i=i+1)
+	s=sum();
+	put_i(s);
+}
+
